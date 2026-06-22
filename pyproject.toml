@@ -81,6 +81,7 @@ packages = [
     "embed/src/pixelrag_embed",
     "index/src/pixelrag_index",
     "serve/src/pixelrag_serve",
+    "visual/src/pixelrag_visual",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -91,6 +92,7 @@ include = [
     "/embed/src",
     "/index/src",
     "/serve/src",
+    "/visual/src",
     "/README.md",
     "/LICENSE",
 ]
