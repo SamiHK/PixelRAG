@@ -19,6 +19,7 @@ STAGES = {
     "index": ("pixelrag_index.pipelines", "main", "pixelrag-index", "index"),
     "monitor": ("pixelrag_index.monitor", "main", "pixelrag-index", "index"),
     "serve": ("pixelrag_serve.api", "main", "pixelrag-serve", "serve"),
+    "visual": ("pixelrag_visual.cli", "main", "pixelrag-visual", "visual"),
 }
 
 

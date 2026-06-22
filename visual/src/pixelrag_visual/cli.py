@@ -44,16 +44,23 @@ def cmd_build(args) -> None:
         client, image_paths, model=args.caption_model, batch_size=4
     )
 
-    # Step 3: Embed captions
+    # Step 3: Embed captions (only successful ones)
     print("Embedding captions...")
-    caption_texts = [captions.get(p, "") for p in image_paths]
+    successful = [(p, c) for p, c in captions.items() if not c.startswith("[ERROR")]
+    caption_texts = [c for _, c in successful]
+    valid_paths = [p for p, _ in successful]
+
+    if not caption_texts:
+        print("No captions generated. Nothing to index.")
+        return
+
     embeddings = embed_batch(client, caption_texts, model=args.embed_model)
     print(f"Embedding dimension: {embeddings.shape[1]}")
 
     # Step 4: Build index
     print("Building FAISS index...")
     result = build_index(
-        embeddings, image_paths, list(captions.values()), output_dir, nlist=args.nlist
+        embeddings, valid_paths, list(captions[p] for p in valid_paths), output_dir, nlist=args.nlist
     )
 
     print(f"\nIndex built successfully!")

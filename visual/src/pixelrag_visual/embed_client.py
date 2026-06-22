@@ -58,6 +58,9 @@ def embed_batch(
     Returns:
         Stacked float32 array of shape (N, D), L2-normalized.
     """
+    if not texts:
+        return np.empty((0, 0), dtype=np.float32)
+
     all_vectors: list[np.ndarray] = []
 
     for i in range(0, len(texts), batch_size):

@@ -60,6 +60,10 @@ eval = [
     "huggingface-hub>=0.20",
 ]
 dev = ["pytest>=8.0"]
+visual = [
+    "openai>=1.0",
+    "faiss-cpu>=1.9.0",
+]
 
 [project.scripts]
 pixelshot = "pixelrag_render.render:main"
@@ -120,6 +124,6 @@ ignore = [
 ]
 
 [tool.pyright]
-extraPaths = ["render/src", "embed/src", "index/src", "serve/src", "train/src"]
+extraPaths = ["render/src", "embed/src", "index/src", "serve/src", "train/src", "visual/src"]
 venvPath = "."
 venv = ".venv"

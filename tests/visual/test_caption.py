@@ -142,8 +142,8 @@ def test_generate_captions_handles_errors():
             mock_client, ["/fake/broken.png"], model="test-vl-model"
         )
 
-    assert "/fake/broken.png" in results
-    assert "[ERROR:" in results["/fake/broken.png"]
+    # Failed captions are skipped (not added to results) so they don't pollute the index.
+    assert "/fake/broken.png" not in results
 
 
 def test_generate_captions_empty_list():

@@ -88,6 +88,7 @@ def generate_captions(
         try:
             captions[path] = generate_caption(client, path, model=model)
         except Exception as e:
-            captions[path] = f"[ERROR: {e}]"
+            # Skip failed captions — error strings would produce garbage vectors.
+            pass
 
     return captions

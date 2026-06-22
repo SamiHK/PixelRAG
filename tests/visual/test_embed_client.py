@@ -70,3 +70,15 @@ def test_embed_batch_normalizes_each_vector():
     # [5, 12] has norm 13 → normalized = [5/13, 12/13]
     np.testing.assert_allclose(result[0], [0.6, 0.8], atol=1e-6)
     np.testing.assert_allclose(result[1], [5 / 13, 12 / 13], atol=1e-6)
+
+
+def test_embed_batch_empty_list():
+    mock_client = MagicMock()
+
+    result = embed_batch(mock_client, [], model="test-model")
+
+    assert isinstance(result, np.ndarray)
+    assert result.shape == (0, 0)
+    assert result.dtype == np.float32
+    # Ensure no API call was made for empty input
+    mock_client.embeddings.create.assert_not_called()
