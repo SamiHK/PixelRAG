@@ -6,8 +6,9 @@ from pathlib import Path
 
 DEFAULT_SYSTEM_PROMPT = (
     "You are a visual analyst. Describe the key visual elements in this image "
-    "concisely (1-2 sentences). Focus on objects, people, actions, colors, and "
-    "scene composition. Do NOT mention any text in the image."
+    "clearly and concisely in a few sentences. Focus on objects, people, actions, environment,colors, and "
+    "scene composition. At the end, add suitable labeling and categorization of the visual content. "
+    "Do NOT mention any text in the image."
 )
 
 
