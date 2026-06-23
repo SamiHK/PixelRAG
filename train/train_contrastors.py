@@ -1761,7 +1761,7 @@ def run_miniv6_eval(
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
     parser.add_argument(
         "--mode",
         choices=["standard", "query-side-tune"],

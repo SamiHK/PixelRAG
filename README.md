@@ -156,7 +156,7 @@ source:
   path: ./my_docs
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: auto          # cuda on Linux, mps on macOS, cpu as fallback
 
 output: ./my_index
@@ -185,7 +185,7 @@ source:
   path: ./paper.pdf
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: auto
 
 output: ./paper_index
@@ -243,7 +243,7 @@ pixelrag build-index --embeddings-dir ./embeddings --output-dir ./index
 ### Training
 
 Fine-tuning lives in `train/` — a **separate uv project** (`wiki-screenshot-training`) with its own
-pinned env. It LoRA-fine-tunes `Qwen/Qwen3-VL-Embedding-2B` for webpage retrieval; run it from
+pinned env. It LoRA-fine-tunes `text-embedding-mxbai-embed-large-v1` for webpage retrieval; run it from
 inside `train/` (`cd train && uv sync`). See [`train/README.md`](train/README.md) for the full recipe.
 
 You don't need to retrain to use the model — the trained adapters are published at

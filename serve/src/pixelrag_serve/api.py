@@ -2,7 +2,7 @@
 """FAISS-based visual search API.
 
 Serves a FAISS index over visual embeddings (Wikipedia screenshots, news images, or any pre-built index).
-Supports text and image queries (single or batch) via Qwen3-VL-Embedding-2B.
+Supports text and image queries (single or batch) via text-embedding-mxbai-embed-large-v1.
 
 Embedding backend: direct transformers-based inference (SDPA attention).
 Produces embeddings aligned with indexes built via the direct_gpu pipeline (cosine = 1.0).
@@ -13,7 +13,7 @@ Usage:
         --index-dir ./index \
         --tiles-dir ./tiles \
         --articles-json ./articles.json \
-        --model Qwen/Qwen3-VL-Embedding-2B \
+        --model text-embedding-mxbai-embed-large-v1 \
         --port 30001
 
     # Start server (CUDA)
@@ -21,7 +21,7 @@ Usage:
         --index-dir ./index \
         --tiles-dir ./tiles \
         --articles-json ./articles.json \
-        --model Qwen/Qwen3-VL-Embedding-2B \
+        --model text-embedding-mxbai-embed-large-v1 \
         --device cuda \
         --port 30001
 
@@ -723,7 +723,7 @@ def main():
         "--articles-json",
         default=os.environ.get("PIXELRAG_ARTICLES_JSON", "./articles.json"),
     )
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
     parser.add_argument(
         "--device",
         choices=["cpu", "cuda"],

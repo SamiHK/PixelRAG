@@ -2720,7 +2720,7 @@ class TiledQwen3VLEmbeddingRetriever(BaseRetriever):
         tile_size: int | tuple[int, int] = 512,
         overlap: int = 0,
         cache_path: str | None = None,
-        model_name: str = "Qwen/Qwen3-VL-Embedding-2B",
+        model_name: str = "text-embedding-mxbai-embed-large-v1",
         top_k: int = 3,
         examples: list[dict] | None = None,
         gpu_ids: list[int] | None = None,
@@ -3723,7 +3723,7 @@ class RenderedTextWrapper(BaseRetriever):
 class HybridRetriever(BaseRetriever):
     """Merge image (LocalAPIRetriever) and text (TextAPIRetriever) hits by raw score.
 
-    Both underlying retrievers embed with Qwen3-VL-Embedding-2B against L2-normalized
+    Both underlying retrievers embed with text-embedding-mxbai-embed-large-v1 against L2-normalized
     FAISS IVFFlat (IP metric) indices, so their per-hit scores are cosine similarities
     on the same scale and directly comparable without any normalization step.
 

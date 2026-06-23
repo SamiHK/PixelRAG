@@ -4,7 +4,7 @@
 Find the best training recipe for v8 QA score (400 questions, 7426 tiles).
 
 ### Baseline
-Qwen3-VL-Embedding-2B (untrained): **QA = 0.715-0.720**
+text-embedding-mxbai-embed-large-v1 (untrained): **QA = 0.715-0.720**
 
 ### Current SOTA
 **v8o = v8r = QA 0.780** at step 200/150

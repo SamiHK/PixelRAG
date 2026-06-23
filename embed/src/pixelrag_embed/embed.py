@@ -1815,7 +1815,7 @@ def embed_shard(
     shard_dir: str,
     output_dir: str,
     gpu_ids: list[int],
-    model: str = "Qwen/Qwen3-VL-Embedding-2B",
+    model: str = "text-embedding-mxbai-embed-large-v1",
     batch_size: int = 512,
     io_workers: int = 8,
     compress_npz: bool = False,
@@ -2352,7 +2352,7 @@ def patch_shard(
     npz_path: str,
     shard_dir: str,
     gpu_ids: list[int],
-    model: str = "Qwen/Qwen3-VL-Embedding-2B",
+    model: str = "text-embedding-mxbai-embed-large-v1",
     batch_size: int = 512,
     io_workers: int = 8,
     compress_npz: bool = False,
@@ -2620,7 +2620,7 @@ def patch_shard(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Embed tiles from a single shard using Qwen3-VL-Embedding-2B.",
+        description="Embed tiles from a single shard using text-embedding-mxbai-embed-large-v1.",
     )
     parser.add_argument(
         "--shard-dir",
@@ -2637,8 +2637,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--model",
-        default="Qwen/Qwen3-VL-Embedding-2B",
-        help="Model name or path (default: Qwen/Qwen3-VL-Embedding-2B)",
+        default="text-embedding-mxbai-embed-large-v1",
+        help="Model name or path (default: text-embedding-mxbai-embed-large-v1)",
     )
     parser.add_argument(
         "--batch-size",

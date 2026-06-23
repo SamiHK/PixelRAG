@@ -5,7 +5,7 @@ Uses ms-swift's embedding training pipeline (InfoNCE loss, cross-GPU negative sh
 instead of our custom GradCache training loop.
 
 Equivalence notes vs train_contrastors.py:
-  - Same model (Qwen3-VL-Embedding-2B), same LoRA targets (q/k/v/o_proj)
+  - Same model (text-embedding-mxbai-embed-large-v1), same LoRA targets (q/k/v/o_proj)
   - Same loss (InfoNCE with in-batch + hard negatives)
   - Same instructions (QUERY_INSTRUCTION / DOC_INSTRUCTION in data JSONL)
   - Temperature: FIXED at 0.07 (swift has no learnable LogitScale)
@@ -48,7 +48,7 @@ def main():
     )
 
     # Model
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
 
     # Data (swift format — use convert_data_for_swift.py first)
     parser.add_argument("--train-jsonl", default="data/train_hn_swift.jsonl")

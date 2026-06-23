@@ -4,7 +4,7 @@ This document is a **complete, self-contained recipe** for reproducing the
 embedding fine-tuning training run from scratch on a fresh machine: environment,
 dataset downloads, model serving, the exact training command, and what to expect.
 
-This is a LoRA fine-tune of `Qwen/Qwen3-VL-Embedding-2B` for visual document
+This is a LoRA fine-tune of `text-embedding-mxbai-embed-large-v1` for visual document
 retrieval, with **ViT LoRA + text warmup + hard negatives**. On the `miniv8` test
 set (400 SimpleQA questions, 7426 candidate tiles) it reaches a peak **QA score
 ≈ 0.785** (vs. ~0.715–0.730 for the untrained base model).

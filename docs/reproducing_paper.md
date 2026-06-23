@@ -10,7 +10,7 @@
 
 | Component | Description | Where |
 |-----------|-------------|-------|
-| **Wikipedia tile index (base)** | 28M vectors, Qwen3-VL-Embedding-2B (pretrained) | `pixelrag-data/search_index/` (215 GB FAISS IVF, dim=2048) |
+| **Wikipedia tile index (base)** | 28M vectors, text-embedding-mxbai-embed-large-v1 (pretrained) | `pixelrag-data/search_index/` (215 GB FAISS IVF, dim=2048) |
 | **Wikipedia tile index (fine-tuned)** | 26M vectors, LoRA checkpoint-200 | `pixelrag-data/search_index_lora_vit_ckpt200_v2/` (202 GB) |
 | **Wikipedia text index** | 15.7M text chunks (1024 tokens, Trafilatura) | `pixelrag-data/text_search_index_1024/` (121 GB) |
 | **Article metadata** | URL↔tile mapping for 7.1M articles | `pixelrag-data/articles.json` (199 MB) |
@@ -31,7 +31,7 @@ pixelrag-serve \
     --index-dir pixelrag-data/search_index \           # or search_index_lora_vit_ckpt200_v2
     --tiles-dir /path/to/wikipedia_tiles \
     --articles-json pixelrag-data/articles.json \
-    --model Qwen/Qwen3-VL-Embedding-2B \
+    --model text-embedding-mxbai-embed-large-v1 \
     --device cuda --port 30888
 
 # 2. Text search API (port 30889) — serves the text chunk index
@@ -39,7 +39,7 @@ pixelrag-serve \
     --index-dir pixelrag-data/text_search_index_1024 \
     --tiles-dir /path/to/text_chunks \
     --articles-json pixelrag-data/articles.json \
-    --model Qwen/Qwen3-VL-Embedding-2B \
+    --model text-embedding-mxbai-embed-large-v1 \
     --device cuda --port 30889
 
 # 3. Reader model (port 8000) — vLLM serving Qwen3.5-4B (default reader)
@@ -197,7 +197,7 @@ pixelrag-serve \
     --index-dir pixelrag-data/search_index_lora_vit_ckpt200_v2 \
     --tiles-dir /path/to/wikipedia_tiles \
     --articles-json pixelrag-data/articles.json \
-    --model Qwen/Qwen3-VL-Embedding-2B \
+    --model text-embedding-mxbai-embed-large-v1 \
     --peft-adapter /path/to/lora_checkpoint_200 \
     --device cuda --port 30888
 ```
@@ -226,7 +226,7 @@ python grade.py nq_tables eval_output/nq_tables_*.jsonl --llm-judge
 ## Table 3: Retrieval–Reader Modality Ablation
 
 **Task**: SimpleQA (1000) + LiveVQA (6632), **Reader**: Qwen3.5-4B, **k=3**,
-**Embedding**: Qwen3-VL-Embedding-2B (base, no LoRA)
+**Embedding**: text-embedding-mxbai-embed-large-v1 (base, no LoRA)
 
 | Row | Retrieval | Reader Input | Flags |
 |-----|-----------|-------------|-------|
@@ -286,7 +286,7 @@ This ablation uses `--prebuilt-tiles-dir` pointing to the pre-built mini-datasto
 python run_bench.py \
     --task simpleqa --model Qwen/Qwen3.5-4B-Instruct \
     --use-tiled-retrieval --use-qwen3vl-embedding \
-    --qwen3vl-model Qwen/Qwen3-VL-Embedding-2B \
+    --qwen3vl-model text-embedding-mxbai-embed-large-v1 \
     --embedding-backend hf \
     --prebuilt-tiles-dir tiles-hard-mini/ \
     --retrieval-top-k 3 --num-examples 400 --no-think
@@ -295,7 +295,7 @@ python run_bench.py \
 python run_bench.py \
     --task simpleqa --model Qwen/Qwen3.5-4B-Instruct \
     --use-tiled-retrieval --use-qwen3vl-embedding \
-    --qwen3vl-model Qwen/Qwen3-VL-Embedding-2B \
+    --qwen3vl-model text-embedding-mxbai-embed-large-v1 \
     --embedding-backend biqwen3 \
     --peft-adapter /path/to/checkpoint-200 \
     --prebuilt-tiles-dir tiles-hard-mini/ \

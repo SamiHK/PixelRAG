@@ -23,7 +23,7 @@ def main():
 
     # Load model
     model = BiQwen3.from_pretrained(
-        "Qwen/Qwen3-VL-Embedding-2B", dtype=torch.bfloat16
+        "text-embedding-mxbai-embed-large-v1", dtype=torch.bfloat16
     ).to(device)
     if args.checkpoint != "base":
         from peft import PeftModel
@@ -33,7 +33,7 @@ def main():
     model.eval()
 
     # Processor with left padding + visual token config
-    processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-Embedding-2B")
+    processor = AutoProcessor.from_pretrained("text-embedding-mxbai-embed-large-v1")
     processor.tokenizer.padding_side = "left"
     ppt = (
         processor.image_processor.patch_size**2

@@ -21,14 +21,14 @@ def get_lm_client(base_url: str | None = None) -> OpenAI:
 
 
 def embed_text(
-    client: OpenAI, text: str, model: str = "qwen3-vl-embedding-2b"
+    client: OpenAI, text: str, model: str = "text-embedding-mxbai-embed-large-v1"
 ) -> np.ndarray:
     """Embed a single text string via LM Studio.
 
     Args:
         client: OpenAI-compatible client configured for LM Studio.
         text: Text to embed.
-        model: Embedding model name (e.g. 'qwen3-vl-embedding-2b').
+        model: Embedding model name (e.g. 'text-embedding-mxbai-embed-large-v1').
 
     Returns:
         L2-normalized float32 embedding vector.
@@ -44,7 +44,7 @@ def embed_text(
 def embed_batch(
     client: OpenAI,
     texts: list[str],
-    model: str = "qwen3-vl-embedding-2b",
+    model: str = "text-embedding-mxbai-embed-large-v1",
     batch_size: int = 16,
 ) -> np.ndarray:
     """Embed multiple text strings via LM Studio.

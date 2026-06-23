@@ -305,7 +305,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="LoRA fine-tuning for Qwen3-VL embeddings"
     )
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
     parser.add_argument("--gpu-id", type=int, default=2)
     parser.add_argument("--train-jsonl", default="training/data/train.jsonl")
     parser.add_argument("--eval-jsonl", default="training/data/eval.jsonl")

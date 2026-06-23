@@ -5,7 +5,7 @@
 #
 # [x] 1. LiveVQA retrieval -- DONE, REPRODUCES LIVE (no freezing). eval/repro_livevqa_live_retrieval.py
 #        sends raw {image,text} to news serve :30095 (= paper's news_image_search_index,
-#        3,626,535 vec, nprobe=128, base Qwen3-VL-Embedding-2B) and lets the serve's OWN
+#        3,626,535 vec, nprobe=128, base text-embedding-mxbai-embed-large-v1) and lets the serve's OWN
 #        direct_gpu encoder embed -> recall matches the frozen :30890 EXACTLY on 100 ex:
 #        @1 29/29, @3 42/42, @5 50/50, @10 57/56. Two earlier myths busted: (a) "paper 57%"
 #        was recall@10 mislabeled as @3 (LIVE @10 = 57%); (b) our "live 31%" came from POSTing
@@ -80,7 +80,7 @@
 # LiveVQA (n=26888, MCQ exact-match): max_tokens=16, top_k=3 (editorial photo + 3 tiles).
 #   Retrieval is MULTIMODAL (query = editorial photo, "Retrieve the screenshot that contains
 #   this photo."). REPRODUCES LIVE -- send raw {image,text} to news serve :30095
-#   (= news_image_search_index, 3,626,535 vec, nprobe=128, base Qwen3-VL-Embedding-2B,
+#   (= news_image_search_index, 3,626,535 vec, nprobe=128, base text-embedding-mxbai-embed-large-v1,
 #   direct_gpu) and let the serve encode. Metric = RECALL@k (article-level dedup, gt_hex_id in
 #   top-k) + final ACC. eval/repro_livevqa_live_retrieval.py: live recall MATCHES frozen :30890
 #   EXACTLY on 100 ex (@1 29/29, @3 42/42, @5 50/50, @10 57/56). Overall published recall:

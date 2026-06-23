@@ -157,7 +157,7 @@ ingest:
   quality: 85
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: cuda
   gpu_ids: [0, 1, 2, 3]
   batch_size: 128
@@ -177,7 +177,7 @@ ingest:
   backend: cdp
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   gpu_ids: [0, 1]
 
 output: ./news_index
@@ -192,7 +192,7 @@ source:
   pages: "1-10"
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: cpu
 
 output: ./paper_index
@@ -210,7 +210,7 @@ distributed:
   prefix: kiwix
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   gpu_ids: [0, 1, 2, 3, 4, 5, 6, 7]
   backend: sglang
 

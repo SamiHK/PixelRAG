@@ -6,6 +6,9 @@ __pycache__/
 dist/
 build/
 .eggs/
+.venv-pip-install/
+images_data/
+visual_index/
 
 # Data / scratch (too large for git)
 *.npy

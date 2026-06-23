@@ -1,7 +1,7 @@
 # Synthetic Data Generation Pipeline
 
 End-to-end pipeline for generating the `screenshot-training-natural-filtered-v2`
-training dataset used to fine-tune `Qwen3-VL-Embedding-2B` for visual document
+training dataset used to fine-tune `text-embedding-mxbai-embed-large-v1` for visual document
 retrieval.
 
 The pipeline produces ~115K high-quality query→screenshot-chunk pairs with hard

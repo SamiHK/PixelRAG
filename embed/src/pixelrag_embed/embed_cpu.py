@@ -199,7 +199,7 @@ def main():
         "--shard-dir", required=True, help="Directory with *.png.tiles/ subdirs"
     )
     parser.add_argument("--output-dir", required=True, help="Output directory for .npz")
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
     parser.add_argument(
         "--device",
         default="auto",

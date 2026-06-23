@@ -1501,7 +1501,7 @@ def main():
     parser.add_argument(
         "--qwen3vl-model",
         type=str,
-        default="Qwen/Qwen3-VL-Embedding-2B",
+        default="text-embedding-mxbai-embed-large-v1",
         help="Qwen3-VL-Embedding model name",
     )
     parser.add_argument(

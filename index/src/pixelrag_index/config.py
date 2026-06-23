@@ -9,7 +9,7 @@ from .sources import SOURCES
 
 DEFAULT_CONFIG = {
     "ingest": {"backend": "cdp", "quality": 85, "tile_height": 8192},
-    "embed": {"model": "Qwen/Qwen3-VL-Embedding-2B", "device": "cuda"},
+    "embed": {"model": "text-embedding-mxbai-embed-large-v1", "device": "cuda"},
     "output": "./index",
 }
 

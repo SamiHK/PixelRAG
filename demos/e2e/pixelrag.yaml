@@ -9,7 +9,7 @@ ingest:
   quality: 85
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: cpu
 
 output: demos/e2e/output

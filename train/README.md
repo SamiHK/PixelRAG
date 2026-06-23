@@ -4,7 +4,7 @@ This document is a **complete, self-contained recipe** for reproducing the
 embedding fine-tuning training run from scratch on a fresh machine: environment,
 dataset downloads, model serving, the exact training command, and what to expect.
 
-This is a LoRA fine-tune of `Qwen/Qwen3-VL-Embedding-2B` for visual document
+This is a LoRA fine-tune of `text-embedding-mxbai-embed-large-v1` for visual document
 retrieval, with **ViT LoRA + text warmup + hard negatives**. On the `miniv8` test
 set (400 SimpleQA questions, 7426 candidate tiles) it reaches a peak **QA score
 ≈ 0.785** (vs. ~0.715–0.730 for the untrained base model).
@@ -20,7 +20,7 @@ The trained LoRA adapters are published at
 You don't need to retrain to use the model — load the adapter on top of the base
 embedding model.
 
-- **Base model:** `Qwen/Qwen3-VL-Embedding-2B`
+- **Base model:** `text-embedding-mxbai-embed-large-v1`
 - **Best checkpoint:** [`lora_vit/ckpt200`](https://huggingface.co/Chrisyichuan/wiki-screenshot-embedding-lora/tree/main/lora_vit/ckpt200)
   — the ViT-LoRA run (`--lora-vit`) at step 200, our best overall checkpoint.
   Each checkpoint folder is a standard PEFT adapter (`adapter_config.json` +
@@ -34,7 +34,7 @@ section):
 from peft import PeftModel
 from transformers import AutoModel
 
-base = AutoModel.from_pretrained("Qwen/Qwen3-VL-Embedding-2B")
+base = AutoModel.from_pretrained("text-embedding-mxbai-embed-large-v1")
 
 # Best checkpoint: ViT-LoRA, step 200
 model = PeftModel.from_pretrained(

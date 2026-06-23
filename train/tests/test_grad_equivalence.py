@@ -237,7 +237,7 @@ def main():
     from transformers import AutoProcessor
     from peft import LoraConfig, get_peft_model
 
-    model_name = "Qwen/Qwen3-VL-Embedding-2B"
+    model_name = "text-embedding-mxbai-embed-large-v1"
     base_model = BiQwen3.from_pretrained(model_name, dtype=torch.bfloat16)
     processor = AutoProcessor.from_pretrained(model_name)
     patch_size = processor.image_processor.patch_size

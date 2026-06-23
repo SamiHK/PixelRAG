@@ -69,7 +69,7 @@ source:
   path: ./my_docs
 
 embed:
-  model: Qwen/Qwen3-VL-Embedding-2B
+  model: text-embedding-mxbai-embed-large-v1
   device: cpu         # or: cuda
 
 output: ./my_index

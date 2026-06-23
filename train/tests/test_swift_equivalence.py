@@ -24,7 +24,7 @@ import torch
 # Helpers
 # ---------------------------------------------------------------------------
 
-MODEL_NAME = "Qwen/Qwen3-VL-Embedding-2B"
+MODEL_NAME = "text-embedding-mxbai-embed-large-v1"
 QUERY_INSTRUCTION = "Retrieve images or text relevant to the user's query."
 DOC_INSTRUCTION = "Represent the user's input."
 

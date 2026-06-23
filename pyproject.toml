@@ -44,7 +44,8 @@ serve = [
 ]
 index = ["pixelrag[embed]", "pyyaml>=6.0"]
 all = ["pixelrag[embed,serve,index]"]
-gpu = ["faiss-gpu-cu12>=1.13.2"]
+# gpu extra removed: faiss-gpu-cu12 has no macOS wheels and blocks uv resolution on Mac.
+# Linux users who need GPU can install manually: pip install faiss-gpu-cu12
 playwright = ["playwright>=1.40.0"]
 pdf = ["pdf2image>=1.16.0"]
 kiwix = ["libzim>=3.6.0"]

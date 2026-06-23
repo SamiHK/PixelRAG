@@ -32,7 +32,7 @@ def encode_image_b64(image_path: str) -> str:
 def generate_caption(
     client,
     image_path: str,
-    model: str = "qwen3-vl-32b-instruct-mlx",
+    model: str = "qwen/qwen3-vl-30b",
     system_prompt: str | None = None,
 ) -> str:
     """Send image to LM Studio VL model and return caption.
@@ -67,7 +67,7 @@ def generate_caption(
 def generate_captions(
     client,
     image_paths: list[str],
-    model: str = "qwen3-vl-32b-instruct-mlx",
+    model: str = "qwen/qwen3-vl-30b",
     batch_size: int = 4,
 ) -> dict[str, str]:
     """Generate captions for multiple images.

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Ran contrastive fine-tuning of Qwen3-VL-Embedding-2B with GradCache + hard negatives.
+Ran contrastive fine-tuning of text-embedding-mxbai-embed-large-v1 with GradCache + hard negatives.
 Fixed 3 bugs in the training pipeline, ran ablation experiments on hyperparameters,
 and completed a 1000-step training run.
 

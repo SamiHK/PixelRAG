@@ -1895,7 +1895,7 @@ const endpoints: Endpoint[] = [
   "dimension": 2048,
   "nlist": 4096,
   "nprobe": 64,
-  "model": "Qwen/Qwen3-VL-Embedding-2B",
+  "model": "text-embedding-mxbai-embed-large-v1",
   "index_built_at": "2026-05-20T00:00:00Z",
   "index_size_bytes": 13312000000,
   "metadata_size_bytes": 512000000

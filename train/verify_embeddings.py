@@ -154,7 +154,7 @@ def compute_metrics(q_embs, i_embs):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default="Qwen/Qwen3-VL-Embedding-2B")
+    parser.add_argument("--model", default="text-embedding-mxbai-embed-large-v1")
     parser.add_argument(
         "--adapter", type=str, required=True, help="Path to LoRA adapter dir"
     )

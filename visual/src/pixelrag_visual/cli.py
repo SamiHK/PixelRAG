@@ -143,12 +143,12 @@ def parse_args() -> argparse.Namespace:
     )
     p_build.add_argument(
         "--caption-model",
-        default="qwen3-vl-32b-instruct-mlx",
+        default="qwen/qwen3-vl-30b",
         help="VL model for captions",
     )
     p_build.add_argument(
         "--embed-model",
-        default="qwen3-vl-embedding-2b",
+        default="text-embedding-mxbai-embed-large-v1",
         help="Embedding model",
     )
     p_build.add_argument(
@@ -175,7 +175,7 @@ def parse_args() -> argparse.Namespace:
         "--lm-studio-url", default=None, help="LM Studio API URL"
     )
     p_search.add_argument(
-        "--embed-model", default="qwen3-vl-embedding-2b", help="Embedding model"
+        "--embed-model", default="text-embedding-mxbai-embed-large-v1", help="Embedding model"
     )
 
     return parser.parse_args()
