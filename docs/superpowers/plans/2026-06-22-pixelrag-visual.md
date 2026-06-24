@@ -14,7 +14,7 @@
 - Use `uv` for dependency management, never `pip install`
 - All new code in `visual/src/pixelrag_visual/`, registered as a single extra (`visual`) in root `pyproject.toml`
 - Follow existing PixelRAG patterns: argparse CLI, dataclasses for records, tqdm progress bars, deterministic ordering
-- LM Studio URL defaults to `http://172.16.0.203:1234/v1`, overridable via `--lm-studio-url`
+- LM Studio URL defaults to `http://studio.tale-alkaline.ts.net:1234/v1`, overridable via `--lm-studio-url`
 - No external dependencies beyond what's already in the root lockfile unless added as a new extra
 
 ---
@@ -237,7 +237,7 @@ from pixelrag_visual.embed_client import get_lm_client, embed_text, embed_batch
 
 def test_get_lm_client_default_url():
     client = get_lm_client()
-    assert str(client.base_url) == "http://172.16.0.203:1234/v1"
+    assert str(client.base_url) == "http://studio.tale-alkaline.ts.net:1234/v1"
 
 
 def test_get_lm_client_custom_url():
@@ -317,7 +317,7 @@ import numpy as np
 from openai import OpenAI
 
 
-DEFAULT_LM_STUDIO_URL = "http://172.16.0.203:1234/v1"
+DEFAULT_LM_STUDIO_URL = "http://studio.tale-alkaline.ts.net:1234/v1"
 
 
 def get_lm_client(base_url: str | None = None) -> OpenAI:

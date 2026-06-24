@@ -7,7 +7,7 @@ from pixelrag_visual.embed_client import get_lm_client, embed_text, embed_batch
 def test_get_lm_client_default_url():
     client = get_lm_client()
     # OpenAI SDK normalizes URLs with a trailing slash
-    assert str(client.base_url).rstrip("/") == "http://172.16.0.203:1234/v1"
+    assert str(client.base_url).rstrip("/") == "http://studio.tale-alkaline.ts.net:1234/v1"
 
 
 def test_get_lm_client_custom_url():
