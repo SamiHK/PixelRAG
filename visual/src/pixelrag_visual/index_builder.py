@@ -133,3 +133,130 @@ def search_index(
         )
 
     return results
+
+
+def merge_index(
+    existing_dir: str,
+    new_embeddings: np.ndarray,
+    new_paths: list[str],
+    new_captions: list[str],
+    nlist: int = 1024,
+) -> dict:
+    """Merge new image vectors into an existing FAISS index.
+
+    Loads the existing index, deduplicates new paths against it, stacks
+    embeddings, and rebuilds a fresh FAISS index from the combined set.
+
+    Args:
+        existing_dir: Directory containing an existing built index.
+        new_embeddings: M x D float32 array of new L2-normalized vectors.
+        new_paths: List of absolute paths for the new images.
+        new_captions: List of caption strings for the new images.
+        nlist: Number of IVF clusters (ignored for FlatIP).
+
+    Returns:
+        Summary dict with merge stats and file paths.
+
+    Raises:
+        ValueError: If new embedding dimension doesn't match existing index.
+    """
+    # Load existing index and metadata
+    index, metadata = load_index(existing_dir)
+
+    old_paths = list(metadata["paths"])
+    old_captions = list(metadata["captions"])
+
+    # Build a set of existing paths for O(1) dedup
+    existing_path_set = set(old_paths)
+
+    # Deduplicate: keep only new paths not already in the index
+    dedup_mask = [p not in existing_path_set for p in new_paths]
+    filtered_paths = [p for p, keep in zip(new_paths, dedup_mask) if keep]
+    filtered_captions = [c for c, keep in zip(new_captions, dedup_mask) if keep]
+    filtered_embeddings = new_embeddings[dedup_mask]
+
+    added_vectors = len(filtered_paths)
+    skipped_duplicates = len(new_paths) - added_vectors
+
+    # Handle empty merge (all duplicates or no new embeddings)
+    if filtered_embeddings.shape[0] == 0:
+        return {
+            "total_vectors": len(old_paths),
+            "dimension": metadata["dimension"],
+            "index_path": str(Path(existing_dir) / "index.faiss"),
+            "metadata_path": str(Path(existing_dir) / "metadata.json"),
+            "config_path": str(Path(existing_dir) / "config.json"),
+            "index_type": metadata.get("index_type", "flat"),
+            "added_vectors": 0,
+            "skipped_duplicates": skipped_duplicates,
+        }
+
+    # Check dimension compatibility
+    old_dim = metadata["dimension"]
+    new_dim = filtered_embeddings.shape[1]
+    if old_dim != new_dim:
+        raise ValueError(
+            f"Embedding dimension mismatch: existing index has {old_dim}D, "
+            f"new embeddings are {new_dim}D. Rebuild the index instead."
+        )
+
+    # Load existing embeddings from FAISS index for stacking
+    old_embeddings = index.reconstruct_batch(np.arange(index.ntotal)).astype(np.float32)
+
+    # Stack all vectors together
+    combined_embeddings = np.vstack([old_embeddings, filtered_embeddings])
+    combined_paths = old_paths + filtered_paths
+    combined_captions = old_captions + filtered_captions
+
+    n = len(combined_paths)
+    dim = old_dim
+
+    # Rebuild FAISS index from combined set (same logic as build_index)
+    if n < 5000:
+        new_index = faiss.IndexFlatIP(dim)
+        index_type = "flat"
+    else:
+        nlist_clamped = min(nlist, n)
+        quantizer = faiss.IndexFlatIP(dim)
+        new_index = faiss.IndexIVFFlat(quantizer, dim, nlist_clamped, faiss.METRIC_INNER_PRODUCT)
+        new_index.train(combined_embeddings)
+        index_type = "ivf"
+
+    new_index.add(combined_embeddings)
+
+    # Save updated files
+    output_path = Path(existing_dir)
+
+    metadata_out = {
+        "paths": combined_paths,
+        "captions": combined_captions,
+        "dimension": dim,
+    }
+    metadata_path = output_path / "metadata.json"
+    with open(metadata_path, "w") as f:
+        json.dump(metadata_out, f, indent=2)
+
+    config = {
+        "nlist": nlist if index_type == "ivf" else 0,
+        "nprobe": max(1, int(n**0.5)),
+        "dimension": dim,
+        "total_vectors": n,
+        "index_type": index_type,
+    }
+    config_path = output_path / "config.json"
+    with open(config_path, "w") as f:
+        json.dump(config, f, indent=2)
+
+    index_path = output_path / "index.faiss"
+    faiss.write_index(new_index, str(index_path))
+
+    return {
+        "total_vectors": n,
+        "dimension": dim,
+        "index_path": str(index_path),
+        "metadata_path": str(metadata_path),
+        "config_path": str(config_path),
+        "index_type": index_type,
+        "added_vectors": added_vectors,
+        "skipped_duplicates": skipped_duplicates,
+    }

@@ -3,9 +3,10 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import pytest
 import faiss
 
-from pixelrag_visual.index_builder import build_index, load_index, search_index
+from pixelrag_visual.index_builder import build_index, load_index, merge_index, search_index
 
 
 def _make_dummy_embeddings(n: int, dim: int = 4) -> np.ndarray:
@@ -111,3 +112,123 @@ def test_search_index_respects_k_parameter():
 
     results = search_index(index, meta, query, k=100)
     assert len(results) == 20  # capped at total vectors
+
+
+def test_merge_index_adds_new_vectors():
+    """Merging 3 new vectors into a 5-vector index yields 8 total."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Build initial index with 5 vectors
+        old_embeddings = _make_dummy_embeddings(5, dim=4)
+        old_paths = [f"/img/{i}.png" for i in range(5)]
+        old_captions = [f"C{i}" for i in range(5)]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        # Merge 3 new vectors with different paths
+        new_embeddings = _make_dummy_embeddings(3, dim=4)
+        new_paths = [f"/img/{i}.png" for i in range(5, 8)]
+        new_captions = [f"C{i}" for i in range(5, 8)]
+
+        result = merge_index(tmpdir, new_embeddings, new_paths, new_captions)
+
+        assert result["total_vectors"] == 8
+        assert result["added_vectors"] == 3
+
+        # Verify loaded index reflects merged state
+        index, metadata = load_index(tmpdir)
+        assert index.ntotal == 8
+        assert len(metadata["paths"]) == 8
+        assert metadata["paths"][5] == "/img/5.png"
+
+
+def test_merge_index_skips_duplicate_paths():
+    """If a new path already exists in the index, it is skipped."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        old_embeddings = _make_dummy_embeddings(3, dim=4)
+        old_paths = ["/a.png", "/b.png", "/c.png"]
+        old_captions = ["A.", "B.", "C."]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        # All new paths overlap with existing
+        new_embeddings = _make_dummy_embeddings(3, dim=4)
+        new_paths = ["/a.png", "/b.png", "/d.png"]  # /d.png is new
+        new_captions = ["D1.", "D2.", "D3."]
+
+        result = merge_index(tmpdir, new_embeddings, new_paths, new_captions)
+
+        assert result["total_vectors"] == 4
+        assert result["added_vectors"] == 1
+        assert result["skipped_duplicates"] == 2
+
+
+def test_merge_index_rejects_dimension_mismatch():
+    """Merging embeddings with wrong dimension raises ValueError."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        old_embeddings = _make_dummy_embeddings(3, dim=4)
+        old_paths = ["/a.png", "/b.png", "/c.png"]
+        old_captions = ["A.", "B.", "C."]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        new_embeddings = _make_dummy_embeddings(2, dim=8)  # wrong dim
+        new_paths = ["/d.png", "/e.png"]
+        new_captions = ["D.", "E."]
+
+        with pytest.raises(ValueError, match="dimension"):
+            merge_index(tmpdir, new_embeddings, new_paths, new_captions)
+
+
+def test_merge_index_empty_new_set():
+    """Merging zero vectors is a no-op that returns added_vectors=0."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        old_embeddings = _make_dummy_embeddings(3, dim=4)
+        old_paths = ["/a.png", "/b.png", "/c.png"]
+        old_captions = ["A.", "B.", "C."]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        result = merge_index(tmpdir, np.empty((0, 4), dtype=np.float32), [], [])
+
+        assert result["total_vectors"] == 3
+        assert result["added_vectors"] == 0
+
+
+def test_merge_index_updates_config():
+    """After merge, config.json reflects the new total_vectors."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        old_embeddings = _make_dummy_embeddings(2, dim=4)
+        old_paths = ["/a.png", "/b.png"]
+        old_captions = ["A.", "B."]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        new_embeddings = _make_dummy_embeddings(3, dim=4)
+        new_paths = ["/c.png", "/d.png", "/e.png"]
+        new_captions = ["C.", "D.", "E."]
+
+        merge_index(tmpdir, new_embeddings, new_paths, new_captions)
+
+        with open(Path(tmpdir) / "config.json") as f:
+            config = json.load(f)
+
+        assert config["total_vectors"] == 5
+
+
+def test_merge_index_preserves_captions():
+    """Merged captions are correctly appended and retrievable."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        old_embeddings = _make_dummy_embeddings(2, dim=4)
+        old_paths = ["/a.png", "/b.png"]
+        old_captions = ["Old A.", "Old B."]
+        build_index(old_embeddings, old_paths, old_captions, tmpdir)
+
+        new_embeddings = _make_dummy_embeddings(2, dim=4)
+        new_paths = ["/c.png", "/d.png"]
+        new_captions = ["New C.", "New D."]
+
+        merge_index(tmpdir, new_embeddings, new_paths, new_captions)
+
+        _, metadata = load_index(tmpdir)
+        assert metadata["captions"] == ["Old A.", "Old B.", "New C.", "New D."]
