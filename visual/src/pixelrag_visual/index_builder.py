@@ -170,7 +170,7 @@ def merge_index(
     existing_path_set = set(old_paths)
 
     # Deduplicate: keep only new paths not already in the index
-    dedup_mask = [p not in existing_path_set for p in new_paths]
+    dedup_mask = np.array([p not in existing_path_set for p in new_paths], dtype=bool)
     filtered_paths = [p for p, keep in zip(new_paths, dedup_mask) if keep]
     filtered_captions = [c for c, keep in zip(new_captions, dedup_mask) if keep]
     filtered_embeddings = new_embeddings[dedup_mask]
@@ -216,7 +216,7 @@ def merge_index(
         new_index = faiss.IndexFlatIP(dim)
         index_type = "flat"
     else:
-        nlist_clamped = min(nlist, n)
+        nlist_clamped = max(2, min(nlist, n))
         quantizer = faiss.IndexFlatIP(dim)
         new_index = faiss.IndexIVFFlat(quantizer, dim, nlist_clamped, faiss.METRIC_INNER_PRODUCT)
         new_index.train(combined_embeddings)

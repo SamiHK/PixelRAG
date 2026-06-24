@@ -232,3 +232,22 @@ def test_merge_index_preserves_captions():
 
         _, metadata = load_index(tmpdir)
         assert metadata["captions"] == ["Old A.", "Old B.", "New C.", "New D."]
+
+
+def test_build_flag_parses_incremental():
+    """The --incremental flag is parsed correctly on the build subcommand."""
+    from pixelrag_visual.cli import parse_args
+
+    args = parse_args(["build", "--input-dir", "/img", "--output-dir", "/idx", "--incremental"])
+    assert args.incremental is True
+
+    args = parse_args(["build", "--input-dir", "/img", "--output-dir", "/idx"])
+    assert args.incremental is False
+
+
+def test_build_flag_not_on_search():
+    """The --incremental flag only exists on build, not search."""
+    from pixelrag_visual.cli import parse_args
+
+    args = parse_args(["search", "--index-dir", "/idx", "--query", "hello"])
+    assert not hasattr(args, "incremental") or args.incremental is None

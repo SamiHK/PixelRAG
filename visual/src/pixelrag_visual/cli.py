@@ -10,13 +10,14 @@ from openai import OpenAI
 from pixelrag_visual.scan import scan_images
 from pixelrag_visual.caption import generate_captions
 from pixelrag_visual.embed_client import get_lm_client, embed_batch
-from pixelrag_visual.index_builder import build_index, load_index, search_index
+from pixelrag_visual.index_builder import build_index, load_index, merge_index, search_index
 
 
 def cmd_build(args) -> None:
     """Build a visual search index from an image directory.
 
     Pipeline: scan -> caption -> embed -> build FAISS index.
+    With --incremental: merges new images into an existing index at output-dir.
     """
     input_dir = os.path.expanduser(args.input_dir)
     output_dir = args.output_dir
@@ -24,6 +25,13 @@ def cmd_build(args) -> None:
     if not os.path.isdir(input_dir):
         print(f"Error: input directory '{input_dir}' does not exist")
         return
+
+    # Check if incremental merge is requested and index exists
+    existing_index_path = Path(output_dir) / "index.faiss"
+    is_incremental = getattr(args, "incremental", False)
+
+    if is_incremental and existing_index_path.exists():
+        print(f"Loading existing index from {output_dir}...")
 
     # Step 1: Scan images
     print(f"Scanning {input_dir} for images...")
@@ -57,14 +65,24 @@ def cmd_build(args) -> None:
     embeddings = embed_batch(client, caption_texts, model=args.embed_model)
     print(f"Embedding dimension: {embeddings.shape[1]}")
 
-    # Step 4: Build index
+    # Step 4: Build or merge index
     print("Building FAISS index...")
-    result = build_index(
-        embeddings, valid_paths, list(captions[p] for p in valid_paths), output_dir, nlist=args.nlist
-    )
 
-    print(f"\nIndex built successfully!")
-    print(f"  Vectors: {result['total_vectors']}")
+    if is_incremental and existing_index_path.exists():
+        result = merge_index(
+            output_dir, embeddings, valid_paths, [captions[p] for p in valid_paths], nlist=args.nlist
+        )
+        print(f"\nIndex merged successfully!")
+        print(f"  Existing vectors: {result['total_vectors'] - result['added_vectors']}")
+        print(f"  Added vectors: {result['added_vectors']}")
+        print(f"  Skipped duplicates: {result['skipped_duplicates']}")
+    else:
+        result = build_index(
+            embeddings, valid_paths, [captions[p] for p in valid_paths], output_dir, nlist=args.nlist
+        )
+        print(f"\nIndex built successfully!")
+
+    print(f"  Total vectors: {result['total_vectors']}")
     print(f"  Dimension: {result['dimension']}")
     print(f"  Index type: {result['index_type']}")
     print(f"  Output: {output_dir}")
@@ -117,7 +135,7 @@ def cmd_search(args) -> None:
         print(f"     {r['caption']}\n")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="pixelrag visual",
         description=(
@@ -157,6 +175,9 @@ def parse_args() -> argparse.Namespace:
     p_build.add_argument(
         "--recursive", action="store_true", help="Recurse into subdirectories"
     )
+    p_build.add_argument(
+        "--incremental", action="store_true", help="Merge new images into existing index instead of replacing"
+    )
 
     # search subparser
     p_search = subparsers.add_parser(
@@ -178,7 +199,7 @@ def parse_args() -> argparse.Namespace:
         "--embed-model", default="text-embedding-mxbai-embed-large-v1", help="Embedding model"
     )
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main():
