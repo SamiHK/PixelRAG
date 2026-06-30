@@ -39,12 +39,22 @@ def get_base_dir() -> str:
     return os.path.expanduser(args.base_dir)
 
 
-def list_indexes(base_dir: str) -> list[str]:
-    """Names of subfolders under base_dir that hold a built index."""
+def list_indexes(base_dir: str) -> dict[str, str]:
+    """Map display name -> index directory.
+
+    Accepts both layouts: base_dir IS an index (metadata.json directly inside), and
+    base_dir is a parent holding one subfolder per index.
+    """
     base = Path(base_dir)
+    found: dict[str, str] = {}
     if not base.is_dir():
-        return []
-    return sorted(p.name for p in base.iterdir() if (p / "metadata.json").exists())
+        return found
+    if (base / "metadata.json").exists():
+        found[base.name] = str(base)
+    for p in sorted(base.iterdir()):
+        if p.is_dir() and (p / "metadata.json").exists():
+            found[p.name] = str(p)
+    return found
 
 
 @st.cache_data
@@ -94,12 +104,12 @@ def main():
 
     # Top bar: choose index (left) + big search box (right).
     left, right = st.columns([1, 4])
-    index = left.selectbox("Index", indexes, label_visibility="collapsed")
+    index = left.selectbox("Index", list(indexes), label_visibility="collapsed")
     query = right.text_input(
         "Search", placeholder="🔍  Search your photos…", label_visibility="collapsed"
     ).strip()
 
-    index_dir = str(Path(base_dir) / index)
+    index_dir = indexes[index]
     meta_path = Path(index_dir) / "metadata.json"
 
     if query:
@@ -124,4 +134,5 @@ def main():
             st.code(caption or "(no caption)", language=None, wrap_lines=True)
 
 
-main()
+if __name__ == "__main__":
+    main()
