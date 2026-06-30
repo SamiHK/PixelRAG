@@ -135,6 +135,19 @@ def cmd_search(args) -> None:
         print(f"     {r['caption']}\n")
 
 
+def cmd_web(args) -> None:
+    """Launch the Streamlit visual search UI (shells out to `streamlit run`)."""
+    import subprocess
+    import pixelrag_visual
+
+    app_path = Path(pixelrag_visual.__file__).parent / "app.py"
+    cmd = ["streamlit", "run", str(app_path), "--server.port", str(args.port)]
+    if args.host:
+        cmd += ["--server.address", args.host]
+    cmd += ["--", "--base-dir", os.path.expanduser(args.base_dir)]
+    subprocess.run(cmd)
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="pixelrag visual",
@@ -199,6 +212,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--embed-model", default="text-embedding-mxbai-embed-large-v1", help="Embedding model"
     )
 
+    # web subparser
+    p_web = subparsers.add_parser(
+        "web", help="Launch the Streamlit visual search UI"
+    )
+    p_web.add_argument(
+        "--base-dir", required=True, help="Directory containing index subfolders"
+    )
+    p_web.add_argument(
+        "--port", type=int, default=8501, help="Port for the Streamlit server"
+    )
+    p_web.add_argument(
+        "--host", default=None, help="Bind address (default: Streamlit's, i.e. localhost)"
+    )
+
     return parser.parse_args(argv)
 
 
@@ -208,6 +235,8 @@ def main():
         cmd_build(args)
     elif args.command == "search":
         cmd_search(args)
+    elif args.command == "web":
+        cmd_web(args)
 
 
 if __name__ == "__main__":
