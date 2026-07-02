@@ -4,7 +4,7 @@ import numpy as np
 from openai import OpenAI
 
 
-DEFAULT_LM_STUDIO_URL = "http://studio.tale-alkaline.ts.net:1234/v1"
+DEFAULT_LM_STUDIO_URL = "http://172.16.0.203:1234/v1"
 
 
 def get_lm_client(base_url: str | None = None) -> OpenAI:

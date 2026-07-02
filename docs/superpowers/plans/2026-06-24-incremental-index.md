@@ -14,7 +14,7 @@
 - Use `uv` for dependency management, never `pip install`
 - All new code in `visual/src/pixelrag_visual/`, registered as a single extra (`visual`) in root `pyproject.toml`
 - Follow existing PixelRAG patterns: argparse CLI, dataclasses for records, tqdm progress bars, deterministic ordering
-- LM Studio URL defaults to `http://studio.tale-alkaline.ts.net:1234/v1`, overridable via `--lm-studio-url`
+- LM Studio URL defaults to `http://172.16.0.203:1234/v1`, overridable via `--lm-studio-url`
 - No external dependencies beyond what's already in the root lockfile unless added as a new extra
 
 ---
